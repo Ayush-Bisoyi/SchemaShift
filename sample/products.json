@@ -1,0 +1,5 @@
+[
+  {"_id": "p_101", "name": "Workshop Ticket", "price": 499.0, "metadata": {"category": "event", "color": "blue"}},
+  {"_id": "p_102", "name": "Club T-Shirt", "price": 799.0, "metadata": {"category": "merchandise", "color": "black"}},
+  {"_id": "p_103", "name": "Sticker Pack", "price": 99.0, "metadata": {"category": "merchandise", "color": "green"}}
+]

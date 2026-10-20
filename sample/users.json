@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "u_001",
+    "fullName": "Aarav Menon",
+    "email": "aarav@example.com",
+    "address": {"city": "Mangaluru", "country": "India"},
+    "tags": ["organizer", "python"],
+    "createdAt": "2026-09-01T10:00:00Z"
+  },
+  {
+    "_id": "u_002",
+    "fullName": "Sara Khan",
+    "email": "sara@example.com",
+    "address": {"city": "Bengaluru", "country": "India"},
+    "tags": ["designer"],
+    "createdAt": "2026-09-03T12:30:00Z"
+  },
+  {
+    "_id": "u_003",
+    "fullName": "Rohan Das",
+    "email": "rohan@example.com",
+    "address": {"city": "Kochi", "country": "India"},
+    "tags": [],
+    "createdAt": "2026-09-05T08:15:00Z"
+  }
+]

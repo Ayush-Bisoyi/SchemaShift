@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "o_501",
+    "userId": "u_001",
+    "items": [{"productId": "p_101", "quantity": 1}, {"productId": "p_103", "quantity": 2}],
+    "total": 697.0,
+    "status": "paid",
+    "placedAt": "2026-09-10T09:00:00Z"
+  },
+  {
+    "_id": "o_502",
+    "userId": "u_002",
+    "items": [{"productId": "p_102", "quantity": 1}],
+    "total": 799.0,
+    "status": "pending",
+    "placedAt": "2026-09-11T14:20:00Z"
+  }
+]
