@@ -1,0 +1,16 @@
+{
+  "source": {
+    "kind": "json-document-store",
+    "path": "sample/source"
+  },
+  "target": {
+    "kind": "sqlite",
+    "path": "artifacts/sample/demo.sqlite"
+  },
+  "mapping": {
+    "confidence_threshold": 0.65,
+    "nested_object_strategy": "flatten-one-level",
+    "object_array_strategy": "child-table",
+    "primitive_array_strategy": "canonical-json-text"
+  }
+}
