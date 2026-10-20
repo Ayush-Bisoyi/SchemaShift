@@ -396,6 +396,8 @@ Possible production extensions include:
 
 Implementation decisions, rejected alternatives, benchmark notes, and failure analysis are documented in DESIGN.md, BENCH.md, and docs/failure-log.md.
 
+MY IMPLEMENTATION VIDEO: [
+](https://drive.google.com/file/d/1Xr96YAQxLRmwP0TKV5hf_1x_8lae7r-6/view?usp=sharing)
 ---
 
 ## Evaluation guide
