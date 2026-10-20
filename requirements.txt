@@ -1,0 +1,3 @@
+# SchemaShift runs with Python's standard library.
+# Optional LLM explanations:
+#   pip install -r requirements-optional.txt

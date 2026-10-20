@@ -1,0 +1,2 @@
+# Install this optional dependency to run the actual LangGraph orchestration path.
+langgraph>=0.2.0
