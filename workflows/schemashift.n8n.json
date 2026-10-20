@@ -1,0 +1,126 @@
+{
+  "name": "SchemaShift - NoSQL to SQL migration",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift inspect --source sample/source --out artifacts/n8n/inspection.json"},
+      "id": "1",
+      "name": "1. Inspect source (deterministic)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift infer --inspection artifacts/n8n/inspection.json --out artifacts/n8n/proposal.json"},
+      "id": "2",
+      "name": "2. Infer schema (deterministic)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift similarity --inspection artifacts/n8n/inspection.json --proposal artifacts/n8n/proposal.json --out artifacts/n8n/similarity.json"},
+      "id": "3",
+      "name": "3. Match percentage (deterministic)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [760, 300]
+    },
+    {
+      "parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift assist --proposal artifacts/n8n/proposal.json --similarity artifacts/n8n/similarity.json --out artifacts/n8n/assistant.json"},
+      "id": "12",
+      "name": "4. Assist and explain (advisory)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [900, 500]
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {"webhookSuffix": "schemashift-approval"}
+      },
+      "id": "4",
+      "name": "5. Human approval gate",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1020, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const approved = $json.approved === true || $json.approved === 'true' || $json.query?.approved === 'true';\nreturn [{ json: { approved } }];"
+      },
+      "id": "5",
+      "name": "6. Read approval decision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {"boolean": [{"value1": "={{ $json.approved }}", "operation": "isTrue"}]}
+      },
+      "id": "6",
+      "name": "Approved?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1510, 300]
+    },
+    {
+      "parameters": {"errorMessage": "Schema was not approved. No database side effect was run."},
+      "id": "7",
+      "name": "Stop safely",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [1740, 430]
+    },
+    {
+      "parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift freeze --proposal artifacts/n8n/proposal.json --similarity artifacts/n8n/similarity.json --out artifacts/n8n/schema_map.json --approve"},
+      "id": "8",
+      "name": "7. Freeze approved map",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1740, 220]
+    },
+    {
+      "parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift generate --map artifacts/n8n/schema_map.json --out artifacts/n8n/generated"},
+      "id": "9",
+      "name": "8. Generate DDL ETL ORM",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2000, 220]
+    },
+    {
+      "parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift migrate --source sample/source --map artifacts/n8n/schema_map.json --db artifacts/n8n/demo.sqlite"},
+      "id": "10",
+      "name": "9. Migrate data (deterministic)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2260, 220]
+    },
+    {
+      "parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift verify --source sample/source --map artifacts/n8n/schema_map.json --db artifacts/n8n/demo.sqlite"},
+      "id": "11",
+      "name": "10. Verify migration",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2520, 220]
+    }
+  ],
+  "connections": {
+    "1. Inspect source (deterministic)": {"main": [[{"node": "2. Infer schema (deterministic)", "type": "main", "index": 0}]]},
+    "2. Infer schema (deterministic)": {"main": [[{"node": "3. Match percentage (deterministic)", "type": "main", "index": 0}]]},
+    "3. Match percentage (deterministic)": {"main": [[{"node": "4. Assist and explain (advisory)", "type": "main", "index": 0}]]},
+    "4. Assist and explain (advisory)": {"main": [[{"node": "5. Human approval gate", "type": "main", "index": 0}]]},
+    "5. Human approval gate": {"main": [[{"node": "6. Read approval decision", "type": "main", "index": 0}]]},
+    "6. Read approval decision": {"main": [[{"node": "Approved?", "type": "main", "index": 0}]]},
+    "Approved?": {"main": [[{"node": "7. Freeze approved map", "type": "main", "index": 0}], [{"node": "Stop safely", "type": "main", "index": 0}]]},
+    "7. Freeze approved map": {"main": [[{"node": "8. Generate DDL ETL ORM", "type": "main", "index": 0}]]},
+    "8. Generate DDL ETL ORM": {"main": [[{"node": "9. Migrate data (deterministic)", "type": "main", "index": 0}]]},
+    "9. Migrate data (deterministic)": {"main": [[{"node": "10. Verify migration", "type": "main", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"},
+  "versionId": "schemashift-2026",
+  "meta": {"templateCredsSetupCompleted": true},
+  "pinData": {},
+  "tags": []
+}

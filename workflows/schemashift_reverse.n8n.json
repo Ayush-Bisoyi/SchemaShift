@@ -1,0 +1,35 @@
+{
+  "name": "SchemaShift bonus - SQL to NoSQL",
+  "active": false,
+  "nodes": [
+    {"parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift reverse-inspect --db artifacts/sample/demo.sqlite --out artifacts/n8n-reverse/inspection.json"}, "id": "r1", "name": "1. Inspect SQL", "type": "n8n-nodes-base.executeCommand", "typeVersion": 1, "position": [200, 300]},
+    {"parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift reverse-infer --inspection artifacts/n8n-reverse/inspection.json --forward-map artifacts/sample/schema_map.json --out artifacts/n8n-reverse/model.json"}, "id": "r2", "name": "2. Infer document model", "type": "n8n-nodes-base.executeCommand", "typeVersion": 1, "position": [460, 300]},
+    {"parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift reverse-similarity --inspection artifacts/n8n-reverse/inspection.json --model artifacts/n8n-reverse/model.json --out artifacts/n8n-reverse/similarity.json"}, "id": "r3", "name": "3. Reverse match percentage", "type": "n8n-nodes-base.executeCommand", "typeVersion": 1, "position": [720, 300]},
+    {"parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift assist --proposal artifacts/n8n-reverse/model.json --similarity artifacts/n8n-reverse/similarity.json --out artifacts/n8n-reverse/assistant.json"}, "id": "r4", "name": "4. Explain reverse mapping", "type": "n8n-nodes-base.executeCommand", "typeVersion": 1, "position": [980, 300]},
+    {"parameters": {"resume": "webhook", "options": {"webhookSuffix": "schemashift-reverse-approval"}}, "id": "r5", "name": "5. Human approval", "type": "n8n-nodes-base.wait", "typeVersion": 1.1, "position": [1240, 300]},
+    {"parameters": {"jsCode": "const approved = $json.approved === true || $json.approved === 'true' || $json.query?.approved === 'true';\nreturn [{ json: { approved } }];"}, "id": "r6", "name": "6. Read approval", "type": "n8n-nodes-base.code", "typeVersion": 2, "position": [1500, 300]},
+    {"parameters": {"conditions": {"boolean": [{"value1": "={{ $json.approved }}", "operation": "isTrue"}]}}, "id": "r7", "name": "Approved?", "type": "n8n-nodes-base.if", "typeVersion": 2, "position": [1760, 300]},
+    {"parameters": {"errorMessage": "Reverse schema was not approved. SQL data remains unchanged."}, "id": "r8", "name": "Stop safely", "type": "n8n-nodes-base.stopAndError", "typeVersion": 1, "position": [2000, 460]},
+    {"parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift reverse-freeze --model artifacts/n8n-reverse/model.json --similarity artifacts/n8n-reverse/similarity.json --out artifacts/n8n-reverse/schema_map.json --approve"}, "id": "r9", "name": "7. Freeze reverse map", "type": "n8n-nodes-base.executeCommand", "typeVersion": 1, "position": [2000, 200]},
+    {"parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift reverse-generate --map artifacts/n8n-reverse/schema_map.json --out artifacts/n8n-reverse/generated"}, "id": "r10", "name": "8. Generate reverse artifacts", "type": "n8n-nodes-base.executeCommand", "typeVersion": 1, "position": [2260, 200]},
+    {"parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift reverse-export --db artifacts/sample/demo.sqlite --map artifacts/n8n-reverse/schema_map.json --out artifacts/n8n-reverse/documents"}, "id": "r11", "name": "9. Export JSON documents", "type": "n8n-nodes-base.executeCommand", "typeVersion": 1, "position": [2520, 200]},
+    {"parameters": {"command": "cd \"${SCHEMASHIFT_ROOT:-.}\" && python3 -m schemashift reverse-verify --db artifacts/sample/demo.sqlite --map artifacts/n8n-reverse/schema_map.json --out artifacts/n8n-reverse/documents"}, "id": "r12", "name": "10. Verify reverse export", "type": "n8n-nodes-base.executeCommand", "typeVersion": 1, "position": [2780, 200]}
+  ],
+  "connections": {
+    "1. Inspect SQL": {"main": [[{"node": "2. Infer document model", "type": "main", "index": 0}]]},
+    "2. Infer document model": {"main": [[{"node": "3. Reverse match percentage", "type": "main", "index": 0}]]},
+    "3. Reverse match percentage": {"main": [[{"node": "4. Explain reverse mapping", "type": "main", "index": 0}]]},
+    "4. Explain reverse mapping": {"main": [[{"node": "5. Human approval", "type": "main", "index": 0}]]},
+    "5. Human approval": {"main": [[{"node": "6. Read approval", "type": "main", "index": 0}]]},
+    "6. Read approval": {"main": [[{"node": "Approved?", "type": "main", "index": 0}]]},
+    "Approved?": {"main": [[{"node": "7. Freeze reverse map", "type": "main", "index": 0}], [{"node": "Stop safely", "type": "main", "index": 0}]]},
+    "7. Freeze reverse map": {"main": [[{"node": "8. Generate reverse artifacts", "type": "main", "index": 0}]]},
+    "8. Generate reverse artifacts": {"main": [[{"node": "9. Export JSON documents", "type": "main", "index": 0}]]},
+    "9. Export JSON documents": {"main": [[{"node": "10. Verify reverse export", "type": "main", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"},
+  "versionId": "schemashift-reverse-2026",
+  "meta": {"templateCredsSetupCompleted": true},
+  "pinData": {},
+  "tags": []
+}
