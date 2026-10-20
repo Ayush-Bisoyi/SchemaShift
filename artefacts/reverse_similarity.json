@@ -1,0 +1,218 @@
+{
+  "algorithm": "0.75 normalized name + 0.25 token overlap",
+  "deterministic": true,
+  "direction": "sql-to-nosql",
+  "entities": [
+    {
+      "fields": [
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "_id",
+          "target": "orders.id"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "placedAt",
+          "target": "orders.placed_at"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "status",
+          "target": "orders.status"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "total",
+          "target": "orders.total"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "userId",
+          "target": "orders.user_id"
+        }
+      ],
+      "percent": 100.0,
+      "source_table": "orders",
+      "target_collection": "orders"
+    },
+    {
+      "fields": [
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "_id",
+          "target": "products.id"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "metadata.category",
+          "target": "products.metadata_category"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "metadata.color",
+          "target": "products.metadata_color"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "name",
+          "target": "products.name"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "price",
+          "target": "products.price"
+        }
+      ],
+      "percent": 100.0,
+      "source_table": "products",
+      "target_collection": "products"
+    },
+    {
+      "fields": [
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "_id",
+          "target": "users.id"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "address.city",
+          "target": "users.address_city"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "address.country",
+          "target": "users.address_country"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "createdAt",
+          "target": "users.created_at"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "email",
+          "target": "users.email"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "fullName",
+          "target": "users.full_name"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "tags",
+          "target": "users.tags"
+        }
+      ],
+      "percent": 100.0,
+      "source_table": "users",
+      "target_collection": "users"
+    }
+  ],
+  "needs_review": [],
+  "overall_percent": 100.0,
+  "threshold": 0.65
+}

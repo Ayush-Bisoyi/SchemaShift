@@ -1,0 +1,248 @@
+{
+  "algorithm": "0.55 name + 0.25 token overlap + 0.20 type compatibility",
+  "assistant": {
+    "deterministic_writes_allowed": false,
+    "notes": [
+      "orders.items is represented as child table order_items because each array element has its own identity and foreign key.",
+      "users keeps primitive arrays as JSON because flattening them would create a less useful one-to-many table for this sample.",
+      "The deterministic similarity score is 100.00%; review items below the configured threshold before freezing."
+    ],
+    "provider": "offline-heuristic",
+    "risk_warnings": [
+      "A human must approve low-confidence mappings before generation.",
+      "The assistant is advisory only; DDL, ETL, and verification remain deterministic."
+    ],
+    "summary": "Offline reviewer guidance generated from the frozen candidate schema."
+  },
+  "deterministic": true,
+  "entities": [
+    {
+      "fields": [
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "_id",
+          "target": "orders.id"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "placedAt",
+          "target": "orders.placed_at"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "status",
+          "target": "orders.status"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "total",
+          "target": "orders.total"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "userId",
+          "target": "orders.user_id"
+        }
+      ],
+      "percent": 100.0,
+      "source_collection": "orders",
+      "target_table": "orders"
+    },
+    {
+      "fields": [
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "_id",
+          "target": "products.id"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "metadata.category",
+          "target": "products.metadata_category"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "metadata.color",
+          "target": "products.metadata_color"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "name",
+          "target": "products.name"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "price",
+          "target": "products.price"
+        }
+      ],
+      "percent": 100.0,
+      "source_collection": "products",
+      "target_table": "products"
+    },
+    {
+      "fields": [
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "_id",
+          "target": "users.id"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "address.city",
+          "target": "users.address_city"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "address.country",
+          "target": "users.address_country"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "createdAt",
+          "target": "users.created_at"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "email",
+          "target": "users.email"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "fullName",
+          "target": "users.full_name"
+        },
+        {
+          "classification": "matched",
+          "components": {
+            "name": 1.0,
+            "token": 1.0,
+            "type": 1.0
+          },
+          "percent": 100.0,
+          "score": 1.0,
+          "source": "tags",
+          "target": "users.tags"
+        }
+      ],
+      "percent": 100.0,
+      "source_collection": "users",
+      "target_table": "users"
+    }
+  ],
+  "needs_review": [],
+  "overall_percent": 100.0,
+  "threshold": 0.65
+}

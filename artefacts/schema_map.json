@@ -1,0 +1,433 @@
+{
+  "approval_note": "Human approved by CLI --approve gate",
+  "approved": true,
+  "frozen_at": "2026-10-17T11:25:07.463207+00:00",
+  "proposal_sha256": "d63a5cdcc2755ce7449f4a48119f223076917094ef768052b92d2e2e899630c8",
+  "schema": {
+    "assistant": {
+      "deterministic_writes_allowed": false,
+      "notes": [
+        "orders.items is represented as child table order_items because each array element has its own identity and foreign key.",
+        "users keeps primitive arrays as JSON because flattening them would create a less useful one-to-many table for this sample."
+      ],
+      "provider": "offline-heuristic",
+      "risk_warnings": [
+        "A human must approve low-confidence mappings before generation.",
+        "The assistant is advisory only; DDL, ETL, and verification remain deterministic."
+      ],
+      "summary": "Offline reviewer guidance generated from the frozen candidate schema."
+    },
+    "collections": [
+      {
+        "children": [
+          {
+            "array_field": "items",
+            "columns": [
+              {
+                "column": "product_id",
+                "references": {
+                  "column": "id",
+                  "table": "products"
+                },
+                "source": "productId",
+                "sql_type": "TEXT"
+              },
+              {
+                "column": "quantity",
+                "source": "quantity",
+                "sql_type": "INTEGER"
+              }
+            ],
+            "parent_fk": {
+              "column": "order_id",
+              "source": "_id"
+            },
+            "table": "order_items"
+          }
+        ],
+        "collection": "orders",
+        "columns": [
+          {
+            "column": "id",
+            "primary_key": true,
+            "source": "_id",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "placed_at",
+            "source": "placedAt",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "status",
+            "source": "status",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "total",
+            "source": "total",
+            "sql_type": "REAL"
+          },
+          {
+            "column": "user_id",
+            "references": {
+              "column": "id",
+              "table": "users"
+            },
+            "source": "userId",
+            "sql_type": "TEXT"
+          }
+        ],
+        "id_field": "_id",
+        "indexes": [
+          "user_id"
+        ],
+        "nested_json_columns": [],
+        "table": "orders"
+      },
+      {
+        "children": [],
+        "collection": "products",
+        "columns": [
+          {
+            "column": "id",
+            "primary_key": true,
+            "source": "_id",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "metadata_category",
+            "source": "metadata.category",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "metadata_color",
+            "source": "metadata.color",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "name",
+            "source": "name",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "price",
+            "source": "price",
+            "sql_type": "REAL"
+          }
+        ],
+        "id_field": "_id",
+        "indexes": [],
+        "nested_json_columns": [],
+        "table": "products"
+      },
+      {
+        "children": [],
+        "collection": "users",
+        "columns": [
+          {
+            "column": "id",
+            "primary_key": true,
+            "source": "_id",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "address_city",
+            "source": "address.city",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "address_country",
+            "source": "address.country",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "created_at",
+            "source": "createdAt",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "email",
+            "source": "email",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "full_name",
+            "source": "fullName",
+            "sql_type": "TEXT"
+          },
+          {
+            "column": "tags",
+            "json": true,
+            "source": "tags",
+            "sql_type": "TEXT"
+          }
+        ],
+        "id_field": "_id",
+        "indexes": [
+          "email"
+        ],
+        "nested_json_columns": [
+          "tags"
+        ],
+        "table": "users"
+      }
+    ],
+    "source_kind": "json-document-store",
+    "strategy": {
+      "arrays_of_objects": "separate child table with parent foreign key",
+      "arrays_of_primitives": "preserve as JSON text",
+      "nested_objects": "flatten one level into snake_case columns",
+      "nulls": "load as SQL NULL"
+    },
+    "version": 1
+  },
+  "similarity": {
+    "algorithm": "0.55 name + 0.25 token overlap + 0.20 type compatibility",
+    "assistant": {
+      "deterministic_writes_allowed": false,
+      "notes": [
+        "orders.items is represented as child table order_items because each array element has its own identity and foreign key.",
+        "users keeps primitive arrays as JSON because flattening them would create a less useful one-to-many table for this sample.",
+        "The deterministic similarity score is 100.00%; review items below the configured threshold before freezing."
+      ],
+      "provider": "offline-heuristic",
+      "risk_warnings": [
+        "A human must approve low-confidence mappings before generation.",
+        "The assistant is advisory only; DDL, ETL, and verification remain deterministic."
+      ],
+      "summary": "Offline reviewer guidance generated from the frozen candidate schema."
+    },
+    "deterministic": true,
+    "entities": [
+      {
+        "fields": [
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "_id",
+            "target": "orders.id"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "placedAt",
+            "target": "orders.placed_at"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "status",
+            "target": "orders.status"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "total",
+            "target": "orders.total"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "userId",
+            "target": "orders.user_id"
+          }
+        ],
+        "percent": 100.0,
+        "source_collection": "orders",
+        "target_table": "orders"
+      },
+      {
+        "fields": [
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "_id",
+            "target": "products.id"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "metadata.category",
+            "target": "products.metadata_category"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "metadata.color",
+            "target": "products.metadata_color"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "name",
+            "target": "products.name"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "price",
+            "target": "products.price"
+          }
+        ],
+        "percent": 100.0,
+        "source_collection": "products",
+        "target_table": "products"
+      },
+      {
+        "fields": [
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "_id",
+            "target": "users.id"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "address.city",
+            "target": "users.address_city"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "address.country",
+            "target": "users.address_country"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "createdAt",
+            "target": "users.created_at"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "email",
+            "target": "users.email"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "fullName",
+            "target": "users.full_name"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0,
+              "type": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "tags",
+            "target": "users.tags"
+          }
+        ],
+        "percent": 100.0,
+        "source_collection": "users",
+        "target_table": "users"
+      }
+    ],
+    "needs_review": [],
+    "overall_percent": 100.0,
+    "threshold": 0.65
+  }
+}

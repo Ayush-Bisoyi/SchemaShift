@@ -1,0 +1,14 @@
+{
+  "deterministic_writes_allowed": false,
+  "notes": [
+    "orders.items is represented as child table order_items because each array element has its own identity and foreign key.",
+    "users keeps primitive arrays as JSON because flattening them would create a less useful one-to-many table for this sample.",
+    "The deterministic similarity score is 100.00%; review items below the configured threshold before freezing."
+  ],
+  "provider": "offline-heuristic",
+  "risk_warnings": [
+    "A human must approve low-confidence mappings before generation.",
+    "The assistant is advisory only; DDL, ETL, and verification remain deterministic."
+  ],
+  "summary": "Offline reviewer guidance generated from the frozen candidate schema."
+}

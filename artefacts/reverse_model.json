@@ -1,0 +1,139 @@
+{
+  "assistant": {
+    "deterministic_writes_allowed": false,
+    "notes": [
+      "orders.items is represented as child table order_items because each array element has its own identity and foreign key."
+    ],
+    "provider": "offline-heuristic",
+    "risk_warnings": [
+      "A human must approve low-confidence mappings before generation.",
+      "The assistant is advisory only; DDL, ETL, and verification remain deterministic."
+    ],
+    "summary": "Offline reviewer guidance generated from the frozen candidate schema."
+  },
+  "collections": [
+    {
+      "children": [
+        {
+          "array_field": "items",
+          "fields": [
+            {
+              "column": "product_id",
+              "field": "productId",
+              "json": false
+            },
+            {
+              "column": "quantity",
+              "field": "quantity",
+              "json": false
+            }
+          ],
+          "parent_fk": "order_id",
+          "table": "order_items"
+        }
+      ],
+      "collection": "orders",
+      "fields": [
+        {
+          "column": "placed_at",
+          "field": "placedAt",
+          "json": false
+        },
+        {
+          "column": "status",
+          "field": "status",
+          "json": false
+        },
+        {
+          "column": "total",
+          "field": "total",
+          "json": false
+        },
+        {
+          "column": "user_id",
+          "field": "userId",
+          "json": false
+        }
+      ],
+      "id_column": "id",
+      "id_field": "_id",
+      "table": "orders"
+    },
+    {
+      "children": [],
+      "collection": "products",
+      "fields": [
+        {
+          "column": "metadata_category",
+          "field": "metadata.category",
+          "json": false
+        },
+        {
+          "column": "metadata_color",
+          "field": "metadata.color",
+          "json": false
+        },
+        {
+          "column": "name",
+          "field": "name",
+          "json": false
+        },
+        {
+          "column": "price",
+          "field": "price",
+          "json": false
+        }
+      ],
+      "id_column": "id",
+      "id_field": "_id",
+      "table": "products"
+    },
+    {
+      "children": [],
+      "collection": "users",
+      "fields": [
+        {
+          "column": "address_city",
+          "field": "address.city",
+          "json": false
+        },
+        {
+          "column": "address_country",
+          "field": "address.country",
+          "json": false
+        },
+        {
+          "column": "created_at",
+          "field": "createdAt",
+          "json": false
+        },
+        {
+          "column": "email",
+          "field": "email",
+          "json": false
+        },
+        {
+          "column": "full_name",
+          "field": "fullName",
+          "json": false
+        },
+        {
+          "column": "tags",
+          "field": "tags",
+          "json": true
+        }
+      ],
+      "id_column": "id",
+      "id_field": "_id",
+      "table": "users"
+    }
+  ],
+  "direction": "sql-to-nosql",
+  "source_kind": "sqlite",
+  "strategy": {
+    "child_tables": "tables named parent_child are embedded as arrays",
+    "foreign_keys": "preserved as ID fields inside documents",
+    "json_columns": "decoded back into JSON values",
+    "root_tables": "tables not modeled as child tables become collections"
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "assistant": {
+    "deterministic_writes_allowed": false,
+    "notes": [
+      "orders.items is represented as child table order_items because each array element has its own identity and foreign key.",
+      "users keeps primitive arrays as JSON because flattening them would create a less useful one-to-many table for this sample."
+    ],
+    "provider": "offline-heuristic",
+    "risk_warnings": [
+      "A human must approve low-confidence mappings before generation.",
+      "The assistant is advisory only; DDL, ETL, and verification remain deterministic."
+    ],
+    "summary": "Offline reviewer guidance generated from the frozen candidate schema."
+  },
+  "collections": [
+    {
+      "children": [
+        {
+          "array_field": "items",
+          "columns": [
+            {
+              "column": "product_id",
+              "references": {
+                "column": "id",
+                "table": "products"
+              },
+              "source": "productId",
+              "sql_type": "TEXT"
+            },
+            {
+              "column": "quantity",
+              "source": "quantity",
+              "sql_type": "INTEGER"
+            }
+          ],
+          "parent_fk": {
+            "column": "order_id",
+            "source": "_id"
+          },
+          "table": "order_items"
+        }
+      ],
+      "collection": "orders",
+      "columns": [
+        {
+          "column": "id",
+          "primary_key": true,
+          "source": "_id",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "placed_at",
+          "source": "placedAt",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "status",
+          "source": "status",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "total",
+          "source": "total",
+          "sql_type": "REAL"
+        },
+        {
+          "column": "user_id",
+          "references": {
+            "column": "id",
+            "table": "users"
+          },
+          "source": "userId",
+          "sql_type": "TEXT"
+        }
+      ],
+      "id_field": "_id",
+      "indexes": [
+        "user_id"
+      ],
+      "nested_json_columns": [],
+      "table": "orders"
+    },
+    {
+      "children": [],
+      "collection": "products",
+      "columns": [
+        {
+          "column": "id",
+          "primary_key": true,
+          "source": "_id",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "metadata_category",
+          "source": "metadata.category",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "metadata_color",
+          "source": "metadata.color",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "name",
+          "source": "name",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "price",
+          "source": "price",
+          "sql_type": "REAL"
+        }
+      ],
+      "id_field": "_id",
+      "indexes": [],
+      "nested_json_columns": [],
+      "table": "products"
+    },
+    {
+      "children": [],
+      "collection": "users",
+      "columns": [
+        {
+          "column": "id",
+          "primary_key": true,
+          "source": "_id",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "address_city",
+          "source": "address.city",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "address_country",
+          "source": "address.country",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "created_at",
+          "source": "createdAt",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "email",
+          "source": "email",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "full_name",
+          "source": "fullName",
+          "sql_type": "TEXT"
+        },
+        {
+          "column": "tags",
+          "json": true,
+          "source": "tags",
+          "sql_type": "TEXT"
+        }
+      ],
+      "id_field": "_id",
+      "indexes": [
+        "email"
+      ],
+      "nested_json_columns": [
+        "tags"
+      ],
+      "table": "users"
+    }
+  ],
+  "source_kind": "json-document-store",
+  "strategy": {
+    "arrays_of_objects": "separate child table with parent foreign key",
+    "arrays_of_primitives": "preserve as JSON text",
+    "nested_objects": "flatten one level into snake_case columns",
+    "nulls": "load as SQL NULL"
+  },
+  "version": 1
+}

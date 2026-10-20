@@ -1,0 +1,177 @@
+{
+  "assistant": {
+    "deterministic_writes_allowed": false,
+    "notes": [
+      "orders.items is represented as child table order_items because each array element has its own identity and foreign key.",
+      "users keeps primitive arrays as JSON because flattening them would create a less useful one-to-many table for this sample.",
+      "The deterministic similarity score is 100.00%; review items below the configured threshold before freezing."
+    ],
+    "provider": "offline-heuristic",
+    "risk_warnings": [
+      "A human must approve low-confidence mappings before generation.",
+      "The assistant is advisory only; DDL, ETL, and verification remain deterministic."
+    ],
+    "summary": "Offline reviewer guidance generated from the frozen candidate schema."
+  },
+  "checks": [
+    {
+      "actual_count": 2,
+      "checksum_ok": true,
+      "count_ok": true,
+      "expected_count": 2,
+      "ok": true,
+      "spot_checks": [
+        {
+          "actual": {
+            "id": "o_501",
+            "placed_at": "2026-09-10T09:00:00Z",
+            "status": "paid",
+            "total": 697.0,
+            "user_id": "u_001"
+          },
+          "expected": {
+            "id": "o_501",
+            "placed_at": "2026-09-10T09:00:00Z",
+            "status": "paid",
+            "total": 697.0,
+            "user_id": "u_001"
+          }
+        },
+        {
+          "actual": {
+            "id": "o_502",
+            "placed_at": "2026-09-11T14:20:00Z",
+            "status": "pending",
+            "total": 799.0,
+            "user_id": "u_002"
+          },
+          "expected": {
+            "id": "o_502",
+            "placed_at": "2026-09-11T14:20:00Z",
+            "status": "pending",
+            "total": 799.0,
+            "user_id": "u_002"
+          }
+        }
+      ],
+      "table": "orders"
+    },
+    {
+      "actual_count": 3,
+      "checksum_ok": true,
+      "count_ok": true,
+      "expected_count": 3,
+      "ok": true,
+      "spot_checks": [
+        {
+          "expected": {
+            "order_id": "o_501",
+            "product_id": "p_101",
+            "quantity": 1
+          }
+        },
+        {
+          "expected": {
+            "order_id": "o_501",
+            "product_id": "p_103",
+            "quantity": 2
+          }
+        }
+      ],
+      "table": "order_items"
+    },
+    {
+      "actual_count": 3,
+      "checksum_ok": true,
+      "count_ok": true,
+      "expected_count": 3,
+      "ok": true,
+      "spot_checks": [
+        {
+          "actual": {
+            "id": "p_101",
+            "metadata_category": "event",
+            "metadata_color": "blue",
+            "name": "Workshop Ticket",
+            "price": 499.0
+          },
+          "expected": {
+            "id": "p_101",
+            "metadata_category": "event",
+            "metadata_color": "blue",
+            "name": "Workshop Ticket",
+            "price": 499.0
+          }
+        },
+        {
+          "actual": {
+            "id": "p_102",
+            "metadata_category": "merchandise",
+            "metadata_color": "black",
+            "name": "Club T-Shirt",
+            "price": 799.0
+          },
+          "expected": {
+            "id": "p_102",
+            "metadata_category": "merchandise",
+            "metadata_color": "black",
+            "name": "Club T-Shirt",
+            "price": 799.0
+          }
+        }
+      ],
+      "table": "products"
+    },
+    {
+      "actual_count": 3,
+      "checksum_ok": true,
+      "count_ok": true,
+      "expected_count": 3,
+      "ok": true,
+      "spot_checks": [
+        {
+          "actual": {
+            "address_city": "Mangaluru",
+            "address_country": "India",
+            "created_at": "2026-09-01T10:00:00Z",
+            "email": "aarav@example.com",
+            "full_name": "Aarav Menon",
+            "id": "u_001",
+            "tags": "[\"organizer\",\"python\"]"
+          },
+          "expected": {
+            "address_city": "Mangaluru",
+            "address_country": "India",
+            "created_at": "2026-09-01T10:00:00Z",
+            "email": "aarav@example.com",
+            "full_name": "Aarav Menon",
+            "id": "u_001",
+            "tags": "[\"organizer\",\"python\"]"
+          }
+        },
+        {
+          "actual": {
+            "address_city": "Bengaluru",
+            "address_country": "India",
+            "created_at": "2026-09-03T12:30:00Z",
+            "email": "sara@example.com",
+            "full_name": "Sara Khan",
+            "id": "u_002",
+            "tags": "[\"designer\"]"
+          },
+          "expected": {
+            "address_city": "Bengaluru",
+            "address_country": "India",
+            "created_at": "2026-09-03T12:30:00Z",
+            "email": "sara@example.com",
+            "full_name": "Sara Khan",
+            "id": "u_002",
+            "tags": "[\"designer\"]"
+          }
+        }
+      ],
+      "table": "users"
+    }
+  ],
+  "passed": true
+}

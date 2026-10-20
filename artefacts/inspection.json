@@ -1,0 +1,313 @@
+{
+  "collections": {
+    "orders": {
+      "candidate_id": "_id",
+      "document_count": 2,
+      "fields": {
+        "_id": {
+          "examples": [
+            "o_501",
+            "o_502"
+          ],
+          "nulls": 0,
+          "present": 2,
+          "type": "string",
+          "type_counts": {
+            "string": 2
+          }
+        },
+        "items": {
+          "examples": [],
+          "nulls": 0,
+          "present": 2,
+          "type": "array",
+          "type_counts": {
+            "array": 2
+          }
+        },
+        "items[]": {
+          "examples": [],
+          "nulls": 0,
+          "present": 3,
+          "type": "object",
+          "type_counts": {
+            "object": 3
+          }
+        },
+        "items[].productId": {
+          "examples": [
+            "p_101",
+            "p_103",
+            "p_102"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "items[].quantity": {
+          "examples": [
+            1,
+            2,
+            1
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "integer",
+          "type_counts": {
+            "integer": 3
+          }
+        },
+        "placedAt": {
+          "examples": [
+            "2026-09-10T09:00:00Z",
+            "2026-09-11T14:20:00Z"
+          ],
+          "nulls": 0,
+          "present": 2,
+          "type": "string",
+          "type_counts": {
+            "string": 2
+          }
+        },
+        "status": {
+          "examples": [
+            "paid",
+            "pending"
+          ],
+          "nulls": 0,
+          "present": 2,
+          "type": "string",
+          "type_counts": {
+            "string": 2
+          }
+        },
+        "total": {
+          "examples": [
+            697.0,
+            799.0
+          ],
+          "nulls": 0,
+          "present": 2,
+          "type": "number",
+          "type_counts": {
+            "number": 2
+          }
+        },
+        "userId": {
+          "examples": [
+            "u_001",
+            "u_002"
+          ],
+          "nulls": 0,
+          "present": 2,
+          "type": "string",
+          "type_counts": {
+            "string": 2
+          }
+        }
+      }
+    },
+    "products": {
+      "candidate_id": "_id",
+      "document_count": 3,
+      "fields": {
+        "_id": {
+          "examples": [
+            "p_101",
+            "p_102",
+            "p_103"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "metadata": {
+          "examples": [],
+          "nulls": 0,
+          "present": 3,
+          "type": "object",
+          "type_counts": {
+            "object": 3
+          }
+        },
+        "metadata.category": {
+          "examples": [
+            "event",
+            "merchandise",
+            "merchandise"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "metadata.color": {
+          "examples": [
+            "blue",
+            "black",
+            "green"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "name": {
+          "examples": [
+            "Workshop Ticket",
+            "Club T-Shirt",
+            "Sticker Pack"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "price": {
+          "examples": [
+            499.0,
+            799.0,
+            99.0
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "number",
+          "type_counts": {
+            "number": 3
+          }
+        }
+      }
+    },
+    "users": {
+      "candidate_id": "_id",
+      "document_count": 3,
+      "fields": {
+        "_id": {
+          "examples": [
+            "u_001",
+            "u_002",
+            "u_003"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "address": {
+          "examples": [],
+          "nulls": 0,
+          "present": 3,
+          "type": "object",
+          "type_counts": {
+            "object": 3
+          }
+        },
+        "address.city": {
+          "examples": [
+            "Mangaluru",
+            "Bengaluru",
+            "Kochi"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "address.country": {
+          "examples": [
+            "India",
+            "India",
+            "India"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "createdAt": {
+          "examples": [
+            "2026-09-01T10:00:00Z",
+            "2026-09-03T12:30:00Z",
+            "2026-09-05T08:15:00Z"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "email": {
+          "examples": [
+            "aarav@example.com",
+            "sara@example.com",
+            "rohan@example.com"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "fullName": {
+          "examples": [
+            "Aarav Menon",
+            "Sara Khan",
+            "Rohan Das"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        },
+        "tags": {
+          "examples": [],
+          "nulls": 0,
+          "present": 3,
+          "type": "array",
+          "type_counts": {
+            "array": 3
+          }
+        },
+        "tags[]": {
+          "examples": [
+            "organizer",
+            "python",
+            "designer"
+          ],
+          "nulls": 0,
+          "present": 3,
+          "type": "string",
+          "type_counts": {
+            "string": 3
+          }
+        }
+      }
+    }
+  },
+  "generated_at": "2026-10-17T11:25:07.459474+00:00",
+  "source_directory": "/Users/ayushbisoyi/Documents/Codex/2026-10-16/for-my-college-club-recruitments-i/sample/source",
+  "source_kind": "json-document-store",
+  "tool": "SchemaShift"
+}

@@ -1,0 +1,363 @@
+{
+  "approval_note": "Human approved by CLI --approve gate",
+  "approved": true,
+  "frozen_at": "2026-10-17T11:25:07.882292+00:00",
+  "proposal_sha256": "8c1c27de91058d6eb80bdf00e52302eb2c4685e61b6e82c44e23dcaabb61b590",
+  "schema": {
+    "assistant": {
+      "deterministic_writes_allowed": false,
+      "notes": [
+        "orders.items is represented as child table order_items because each array element has its own identity and foreign key."
+      ],
+      "provider": "offline-heuristic",
+      "risk_warnings": [
+        "A human must approve low-confidence mappings before generation.",
+        "The assistant is advisory only; DDL, ETL, and verification remain deterministic."
+      ],
+      "summary": "Offline reviewer guidance generated from the frozen candidate schema."
+    },
+    "collections": [
+      {
+        "children": [
+          {
+            "array_field": "items",
+            "fields": [
+              {
+                "column": "product_id",
+                "field": "productId",
+                "json": false
+              },
+              {
+                "column": "quantity",
+                "field": "quantity",
+                "json": false
+              }
+            ],
+            "parent_fk": "order_id",
+            "table": "order_items"
+          }
+        ],
+        "collection": "orders",
+        "fields": [
+          {
+            "column": "placed_at",
+            "field": "placedAt",
+            "json": false
+          },
+          {
+            "column": "status",
+            "field": "status",
+            "json": false
+          },
+          {
+            "column": "total",
+            "field": "total",
+            "json": false
+          },
+          {
+            "column": "user_id",
+            "field": "userId",
+            "json": false
+          }
+        ],
+        "id_column": "id",
+        "id_field": "_id",
+        "table": "orders"
+      },
+      {
+        "children": [],
+        "collection": "products",
+        "fields": [
+          {
+            "column": "metadata_category",
+            "field": "metadata.category",
+            "json": false
+          },
+          {
+            "column": "metadata_color",
+            "field": "metadata.color",
+            "json": false
+          },
+          {
+            "column": "name",
+            "field": "name",
+            "json": false
+          },
+          {
+            "column": "price",
+            "field": "price",
+            "json": false
+          }
+        ],
+        "id_column": "id",
+        "id_field": "_id",
+        "table": "products"
+      },
+      {
+        "children": [],
+        "collection": "users",
+        "fields": [
+          {
+            "column": "address_city",
+            "field": "address.city",
+            "json": false
+          },
+          {
+            "column": "address_country",
+            "field": "address.country",
+            "json": false
+          },
+          {
+            "column": "created_at",
+            "field": "createdAt",
+            "json": false
+          },
+          {
+            "column": "email",
+            "field": "email",
+            "json": false
+          },
+          {
+            "column": "full_name",
+            "field": "fullName",
+            "json": false
+          },
+          {
+            "column": "tags",
+            "field": "tags",
+            "json": true
+          }
+        ],
+        "id_column": "id",
+        "id_field": "_id",
+        "table": "users"
+      }
+    ],
+    "direction": "sql-to-nosql",
+    "source_kind": "sqlite",
+    "strategy": {
+      "child_tables": "tables named parent_child are embedded as arrays",
+      "foreign_keys": "preserved as ID fields inside documents",
+      "json_columns": "decoded back into JSON values",
+      "root_tables": "tables not modeled as child tables become collections"
+    }
+  },
+  "similarity": {
+    "algorithm": "0.75 normalized name + 0.25 token overlap",
+    "deterministic": true,
+    "direction": "sql-to-nosql",
+    "entities": [
+      {
+        "fields": [
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "_id",
+            "target": "orders.id"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "placedAt",
+            "target": "orders.placed_at"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "status",
+            "target": "orders.status"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "total",
+            "target": "orders.total"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "userId",
+            "target": "orders.user_id"
+          }
+        ],
+        "percent": 100.0,
+        "source_table": "orders",
+        "target_collection": "orders"
+      },
+      {
+        "fields": [
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "_id",
+            "target": "products.id"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "metadata.category",
+            "target": "products.metadata_category"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "metadata.color",
+            "target": "products.metadata_color"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "name",
+            "target": "products.name"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "price",
+            "target": "products.price"
+          }
+        ],
+        "percent": 100.0,
+        "source_table": "products",
+        "target_collection": "products"
+      },
+      {
+        "fields": [
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "_id",
+            "target": "users.id"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "address.city",
+            "target": "users.address_city"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "address.country",
+            "target": "users.address_country"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "createdAt",
+            "target": "users.created_at"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "email",
+            "target": "users.email"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "fullName",
+            "target": "users.full_name"
+          },
+          {
+            "classification": "matched",
+            "components": {
+              "name": 1.0,
+              "token": 1.0
+            },
+            "percent": 100.0,
+            "score": 1.0,
+            "source": "tags",
+            "target": "users.tags"
+          }
+        ],
+        "percent": 100.0,
+        "source_table": "users",
+        "target_collection": "users"
+      }
+    ],
+    "needs_review": [],
+    "overall_percent": 100.0,
+    "threshold": 0.65
+  }
+}
