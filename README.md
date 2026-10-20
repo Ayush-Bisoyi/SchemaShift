@@ -117,9 +117,7 @@ workflows/                     Forward and reverse n8n workflow exports
 tests/                         Forward, reverse, and optional LangGraph tests
 docs/                          Framework, failure, and zero-downtime documentation
 README.md                      Submission overview and reproducibility guide
-CODE_WALKTHROUGH.md            Beginner-friendly file-by-file explanation
 DESIGN.md                      Architectural decisions and alternatives
-LEARNING_GUIDE.md              Concepts and learning notes
 BENCH.md                       Reproducible benchmark notes
 ~~~
 
@@ -406,7 +404,6 @@ The most relevant files for review are:
 
 - README.md for the submission overview and reproducibility
 - DESIGN.md for architectural decisions
-- CODE_WALKTHROUGH.md for a file-by-file explanation
 - schemashift/ for the implementation
 - tests/ for executable correctness checks
 - artifacts/sample/ for generated evidence
