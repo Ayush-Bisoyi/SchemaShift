@@ -1,247 +1,416 @@
 # SchemaShift
 
-SchemaShift is a deterministic-first hybrid developer tool for migrating a document-style NoSQL data source into a relational SQL database. It was built for the [SchemaShift recruitment challenge](https://github.com/WebClub-NITK/GDGxIris-Recruitments-2026/blob/main/Challenges/SchemaShift.md).
+## Submission overview
 
-The sample is intentionally small but exercises the important cases: nested objects (`address`, `metadata`), primitive arrays (`tags`), arrays of objects (`orders.items`), primary keys, foreign keys, indexes, deterministic matching, generated SQL, rollback, ETL, ORM/data-access code, and verification.
+SchemaShift is a deterministic-first hybrid migration tool for converting document-style NoSQL data into a relational SQL database.
 
-## What is included
+This submission includes:
 
-```text
-sample/source/                 JSON document collections: users, products, orders
-schemashift/                   Python implementation of every pipeline stage
-artifacts/sample/              Reproducible reports and generated migration files
-workflows/schemashift.n8n.json Importable n8n workflow export
-workflows/schemashift_reverse.n8n.json Importable reverse n8n workflow
-schemashift/langgraph_app.py     Real LangGraph graph with approval interrupt
-schemashift/langgraph_reverse_app.py Real reverse LangGraph graph
-tests/test_pipeline.py         End-to-end tests
-DESIGN.md                      Dated decisions and rejected alternatives
-BENCH.md                       Reproducible benchmark notes
-docs/                          Zero-downtime design and failure log
-```
+- NoSQL/document-style JSON to SQL migration
+- SQL to NoSQL reconstruction as the bidirectional bonus
+- deterministic schema inspection and inference
+- reproducible source-to-target similarity scoring
+- human approval before data-changing operations
+- frozen schema maps
+- generated DDL, ETL, rollback, ORM, and Prisma artifacts
+- foreign-key-aware migration ordering
+- deterministic verification using counts, checksums, and spot checks
+- real LangGraph orchestration with checkpointing and approval interrupts
+- importable n8n workflows
+- automated tests and reproducible sample artifacts
 
-## Hybrid rule and safety model
+The demonstration uses JSON collections as the document source and SQLite as the relational target. This keeps the project self-contained and runnable without a database server while preserving the same design principles required for MongoDB-to-PostgreSQL migration.
 
-The core safety principle is: deterministic code owns truth and side effects; optional assistant code may suggest, rank, or explain but can never write production data.
+Challenge reference: [SchemaShift recruitment challenge](https://github.com/WebClub-NITK/GDGxIris-Recruitments-2026/blob/main/Challenges/SchemaShift.md)
 
-| Layer | Deterministic part | Non-deterministic assist | Why / gate / match percentage |
+---
+
+## Core design principle
+
+The implementation follows the required hybrid rule:
+
+> Deterministic code owns schema decisions that affect data, generated scripts, database writes, and verification. The optional assistant may suggest, rank, or explain, but it never performs database side effects or decides whether verification passed.
+
+This prevents an unpredictable model response from silently changing a migration.
+
+| Pipeline layer | Deterministic implementation | Assistant role | Safety boundary |
 |---|---|---|---|
-| Inspect / infer | Structural sampling, type counts, naming rules, candidate schema | Optional OpenAI explanation of names, relations, and embed-vs-table choices | A candidate is saved as JSON and must be reviewed before freezing. |
-| Similarity | Normalization, token overlap, `SequenceMatcher`, type compatibility, reproducible percentages | Optional explanation of ambiguous mappings | Low scores are listed in `needs_review`; the human gate blocks freeze unless `--approve` is supplied. |
-| Script generation | DDL, indexes, ETL loader, rollback, Python repository, and Prisma schema from the frozen map | Comments and risk notes | Production scripts are generated from one immutable map, never from free-form LLM text. |
-| Data migration | Typed transforms, FK order, transactions, retries can be added around the deterministic loader, verification | Optional diagnosis and explanation of a failed run | Failed writes roll back; the assistant cannot modify mappings automatically. |
-| Verify / rollback | Counts, canonical checksums, spot checks, and rollback SQL | Human-readable drift summary | Pass/fail is calculated by code. A failed check is never hidden by an assistant. |
-| ORM / application layer | Generated Python SQLite repository and `schema.prisma` | Suggested query idioms and manual-review notes | Generated code is reviewable and regenerated only after a new freeze. |
-| Orchestration | Explicit graph nodes, artifact paths, gate, and failure propagation | Assist/explain nodes | `workflow_run.json` records every node as deterministic or assistive; n8n export is in `workflows/`. |
+| Inspect and infer | Structural traversal, type counts, naming rules, and candidate schema generation | Explain naming and embed-versus-table choices | Proposal is saved and reviewed before freezing |
+| Similarity | Normalization, token overlap, SequenceMatcher, type compatibility, and percentages | Explain ambiguous mappings | Low-confidence mappings enter needs_review |
+| Approval | Frozen-map creation and SHA-256 identity | Summarize risks | Migration cannot proceed without approval |
+| Script generation | DDL, indexes, ETL loader, rollback, ORM, and Prisma output | Add comments and risk notes | Artifacts come only from the frozen map |
+| Migration | Type conversion, parent-before-child loading, parameterized SQL, and transactions | Diagnose failures | Assistant cannot modify mappings or rows |
+| Verification | Counts, canonical checksums, and spot checks | Explain drift | Pass/fail is calculated by Python |
+| Orchestration | Explicit graph nodes, artifact paths, gates, and failure propagation | Optional explanation nodes | LangGraph and n8n call the same deterministic core |
 
-### Match percentage
+---
 
-The deterministic score is:
+## Architecture
 
-```text
+Forward migration:
+
+~~~text
+Document collections
+        |
+        v
+Inspect source
+        |
+        v
+Infer candidate relational schema
+        |
+        v
+Calculate deterministic similarity scores
+        |
+        v
+Human approval gate
+        |
+        v
+Freeze schema map
+        |
+        +--> Generate DDL, ETL, rollback, ORM, and Prisma artifacts
+        |
+        +--> Migrate data into SQL
+        |
+        v
+Verify counts, checksums, and spot checks
+~~~
+
+Reverse bonus:
+
+~~~text
+SQL database
+        |
+        v
+Inspect tables, columns, foreign keys, and indexes
+        |
+        v
+Infer document collections and nested arrays
+        |
+        v
+Calculate reverse similarity scores
+        |
+        v
+Human approval gate
+        |
+        v
+Freeze reverse schema map
+        |
+        +--> Generate reverse exporter and ORM artifacts
+        |
+        +--> Export nested JSON documents
+        |
+        v
+Verify root documents and embedded child counts
+~~~
+
+The plain Python workflow, LangGraph workflow, and n8n workflow all reuse the same deterministic migration functions.
+
+---
+
+## Repository structure
+
+~~~text
+sample/source/                 Sample users, products, and orders collections
+schemashift/                   Python implementation of every pipeline stage
+artifacts/sample/              Reports, generated scripts, database, and evidence
+workflows/                     Forward and reverse n8n workflow exports
+tests/                         Forward, reverse, and optional LangGraph tests
+docs/                          Framework, failure, and zero-downtime documentation
+README.md                      Submission overview and reproducibility guide
+CODE_WALKTHROUGH.md            Beginner-friendly file-by-file explanation
+DESIGN.md                      Architectural decisions and alternatives
+LEARNING_GUIDE.md              Concepts and learning notes
+BENCH.md                       Reproducible benchmark notes
+~~~
+
+Important implementation modules include:
+
+- inspect.py for source traversal and type statistics
+- infer.py for relational schema inference
+- similarity.py for deterministic mapping percentages
+- freeze.py for approval and schema-map freezing
+- generate.py for DDL, ETL, rollback, ORM, and Prisma generation
+- migrate.py for transactional SQL loading
+- verify.py for deterministic verification
+- reverse.py for SQL-to-NoSQL reconstruction
+- langgraph_app.py for forward LangGraph orchestration
+- langgraph_reverse_app.py for reverse LangGraph orchestration
+
+---
+
+## Forward migration: NoSQL to SQL
+
+The sample contains users, products, and orders. It demonstrates:
+
+- nested objects such as address
+- primitive arrays such as tags
+- arrays of objects such as orders.items
+- primary keys and foreign keys
+- nullable fields and indexes
+- deterministic field matching
+
+The inference rules are:
+
+- _id becomes the SQL id primary key.
+- Simple nested objects are flattened one level, such as address.city to address_city.
+- Primitive arrays remain canonical JSON text in a TEXT column.
+- Arrays of objects become child tables.
+- orders.items becomes order_items.
+- Child rows receive a parent foreign key such as order_id.
+- ID-like fields are linked to matching tables when possible.
+- Parent tables are loaded before child tables.
+
+The migration uses parameterized SQLite statements, enables foreign keys, and performs writes inside a transaction. If an exception occurs, the transaction is rolled back.
+
+---
+
+## Deterministic similarity scoring
+
+The source-to-target match percentage is calculated entirely by Python:
+
+~~~text
 55% normalized name similarity
 + 25% token overlap
 + 20% source/target type compatibility
-```
+~~~
 
-The sample produces an overall match of `100.00%` because its frozen mapping is intentionally clear. Real data with ambiguous names will produce `guessed` and `needs_review` entries. The report contains an overall percentage, per-entity percentage, and per-field percentage.
+The report contains field-level, entity-level, and overall percentages, along with matched, guessed, and needs_review classifications.
 
-## Quick start
+The sample mapping produces an overall score of 100.00% because the sample schema is intentionally clear. The score is reproducible for the same inspection and proposal. The assistant can explain a low-confidence mapping, but it cannot change the score.
 
-You need Python 3.10 or newer. No database server is required for the local demonstration.
+---
 
-```bash
-python3 --version
-python3 -m unittest discover -s tests -v
-python3 -m schemashift demo --approve
-```
+## Human approval and frozen schema maps
 
-Expected summary:
+The approval gate is implemented in freeze.py.
 
-```text
-Migration complete: {'orders': 2, 'order_items': 3, 'products': 3, 'users': 3}
-Verification passed: True
-```
+If low-confidence mappings exist and approval has not been provided, freezing fails. Once approved, the system stores:
 
-The generated files will be in `artifacts/sample/`:
+- the approved schema
+- the similarity report
+- the approval decision
+- the freeze timestamp
+- a SHA-256 hash of the proposal
 
-```text
-inspection.json                 source structure and type statistics
-proposal.json                   candidate tables and columns plus assistant notes
-similarity.json                 reproducible match percentages and review list
-schema_map.json                 frozen map consumed by all downstream stages
-generated/schema.sql            SQLite DDL and indexes
-generated/rollback.sql          cleanup script in dependency-safe order
-generated/load.py               generated ETL entry point
-generated/generated_orm.py      generated Python data-access layer
-generated/schema.prisma         optional Prisma-compatible model output
-verification.json               counts, checksums, and spot checks
-workflow_run.json               node-by-node execution record
-```
+All downstream stages consume this frozen map. They do not silently re-infer the schema. This makes generated scripts and migration results auditable and reproducible.
 
-## Run each stage manually
+---
 
-This is useful when explaining the project in an interview:
+## Generated artifacts
 
-```bash
-python3 -m schemashift inspect \
-  --source sample/source --out artifacts/manual/inspection.json
+The forward generator produces:
 
-python3 -m schemashift infer \
-  --inspection artifacts/manual/inspection.json \
-  --out artifacts/manual/proposal.json
+~~~text
+schema.sql                  SQLite DDL, keys, foreign keys, and indexes
+rollback.sql                Dependency-safe cleanup script
+load.py                     Generated ETL entry point
+generated_orm.py            Generated Python data-access layer
+schema.prisma               Prisma-style relational model
+schema_map.json             Frozen mapping used to generate the artifacts
+~~~
 
-python3 -m schemashift similarity \
-  --inspection artifacts/manual/inspection.json \
-  --proposal artifacts/manual/proposal.json \
-  --out artifacts/manual/similarity.json
+The generated files are derived from the schema map rather than from free-form assistant output.
 
-python3 -m schemashift freeze \
-  --proposal artifacts/manual/proposal.json \
-  --similarity artifacts/manual/similarity.json \
-  --out artifacts/manual/schema_map.json --approve
+---
 
-python3 -m schemashift generate \
-  --map artifacts/manual/schema_map.json \
-  --out artifacts/manual/generated
+## Verification
 
-python3 -m schemashift migrate \
-  --source sample/source --map artifacts/manual/schema_map.json \
-  --db artifacts/manual/demo.sqlite
+Verification is deterministic and independent of the assistant.
 
-python3 -m schemashift verify \
-  --source sample/source --map artifacts/manual/schema_map.json \
-  --db artifacts/manual/demo.sqlite
-```
+For every mapped entity, the verifier checks:
 
-## How the mapping works
+- source document count against target row count
+- transformed source values against target values
+- canonical row checksums
+- selected root-field spot checks
+- child-table row counts
 
-* Each JSON file is treated as one source collection.
-* `_id` becomes the SQL `id` primary key.
-* Nested objects are flattened one level: `address.city` becomes `address_city`.
-* Arrays of primitive values stay as canonical JSON text: `tags` becomes a `TEXT` column.
-* Arrays of objects become child tables: `orders.items` becomes `order_items`, with `order_id` as a foreign key.
-* ID-like fields become foreign keys when a matching target table exists: `orders.user_id → users.id` and `order_items.product_id → products.id`.
-* Foreign-key parents are loaded before child rows, all writes happen in one SQLite transaction, and any exception rolls the transaction back.
-* Verification creates the same transformed rows in memory, sorts them canonically, hashes them with SHA-256, and compares the result with the target database.
+Rows are normalized, sorted, serialized canonically, and hashed with SHA-256 so harmless row-order differences do not create false failures. The result contains individual checks and an overall passed value.
 
-## Optional LLM assistant
+---
 
-The project works offline with a safe heuristic explainer. To enable optional OpenAI explanations, install the optional dependency and set the environment variables below:
+## SQL-to-NoSQL bidirectional bonus
 
-```bash
+The reverse implementation is in reverse.py. It:
+
+1. inspects SQLite metadata using sqlite_master, PRAGMA table_info, and PRAGMA foreign_key_list;
+2. identifies root and child tables;
+3. infers document collections and nested arrays;
+4. optionally uses the forward frozen map to recover original source field names;
+5. calculates deterministic reverse similarity scores;
+6. pauses for human approval;
+7. freezes a reverse schema map;
+8. generates reverse exporter and ORM artifacts;
+9. exports SQL rows into nested JSON documents; and
+10. verifies root documents and embedded child counts.
+
+For example, orders and order_items can be reconstructed as documents containing nested items arrays. The reverse path follows the same hybrid rule: deterministic Python owns model creation, export, and verification, while the assistant remains advisory.
+
+---
+
+## LangGraph orchestration
+
+The repository includes an actual LangGraph implementation.
+
+Forward graph:
+
+~~~text
+inspect -> infer -> similarity -> approval -> freeze
+        -> generate -> migrate -> verify
+~~~
+
+Reverse graph:
+
+~~~text
+inspect -> infer -> similarity -> approval -> freeze
+        -> generate -> export -> verify
+~~~
+
+LangGraph provides typed shared state, explicit nodes and edges, in-memory checkpointing for the demonstration, a real interrupt approval point, and resume support using a thread ID and Command.
+
+The deterministic pipeline functions remain separate from LangGraph, so the same logic can be tested without the framework.
+
+~~~bash
+python3 -m pip install -r requirements-langgraph.txt
+python3 -m schemashift.langgraph_app --approve
+python3 -m schemashift.langgraph_reverse_app --approve
+~~~
+
+Without the approve flag, the graphs pause before migration or export and require a human decision.
+
+---
+
+## n8n orchestration
+
+The repository includes:
+
+- workflows/schemashift.n8n.json
+- workflows/schemashift_reverse.n8n.json
+
+The workflows use Execute Command, Wait, Code, If, and Stop and Error nodes.
+
+n8n acts as the conductor. Python remains responsible for schema decisions, database writes, exports, and verification. The workflows are intended for trusted local or self-hosted n8n installations and use the SCHEMASHIFT_ROOT environment variable to locate the repository.
+
+The LangGraph path is the simplest local demonstration because it does not require a separate n8n service.
+
+---
+
+## Optional assistant
+
+The project runs offline by default with a deterministic heuristic explanation layer.
+
+An optional OpenAI-backed explanation layer can be enabled with:
+
+~~~bash
 python3 -m pip install -r requirements-optional.txt
 export OPENAI_API_KEY="your-key"
 export SCHEMASHIFT_LLM=1
 python3 -m schemashift demo --approve
-```
+~~~
 
-The assistant receives reports and proposes explanations only. It cannot call the migration writer, change `schema_map.json`, execute SQL, or mark verification as passed. If the API fails, SchemaShift records the error and falls back to the offline explanation.
+The assistant receives reports and returns explanations or risk notes. It cannot execute migration SQL, change the frozen map, write database rows, mark verification as passed, or bypass approval. If the optional API is unavailable, the project falls back to the offline explanation layer.
 
-The sample settings are also recorded in [`config/sample.json`](config/sample.json), so source and target locations are easy to move out of the command line when adapting the project.
+---
 
-## LangGraph and n8n workflow paths
+## Reproducing the demonstration
 
-The project includes both requested orchestration technologies.
+Requirements:
 
-### LangGraph
+- Python 3.10 or newer
+- no external database server for the sample
+- optional LangGraph installation for the graph test
+- optional n8n installation for the visual workflow
 
-Install and run the actual Python graph:
+Run the complete deterministic sample:
 
-```bash
-python3 -m pip install -r requirements-langgraph.txt
-python3 -m schemashift.langgraph_app --approve
-```
+~~~bash
+python3 -m unittest discover -s tests -v
+python3 -m schemashift demo --approve
+~~~
 
-Without `--approve`, the graph pauses at a real LangGraph `interrupt()` and asks for human approval before any database side effect. It uses `InMemorySaver` checkpointing for the demo and connects: inspect → infer → similarity → approval → freeze → generate → migrate → verify.
+Expected result:
 
-### n8n
+~~~text
+Migration complete: {'orders': 2, 'order_items': 3, 'products': 3, 'users': 3}
+Verification passed: True
+~~~
 
-Import `workflows/schemashift.n8n.json` into self-hosted n8n. It uses built-in Execute Command, Wait, Code, If, and Stop and Error nodes. Set `SCHEMASHIFT_ROOT` to this repository’s absolute path before executing it. The Wait node provides the approval pause; rejected approval stops before migration. Execute Command is not available on n8n Cloud and is disabled by default in recent self-hosted n8n versions, so enable it only in a trusted local environment. The LangGraph path is the easiest local demonstration.
+The evidence is stored under artifacts/sample/:
 
-Detailed setup is in [`docs/frameworks.md`](docs/frameworks.md). Both frameworks call the same deterministic migration functions, keeping orchestration separate from production data side effects.
+~~~text
+inspection.json
+proposal.json
+similarity.json
+schema_map.json
+generated/schema.sql
+generated/rollback.sql
+generated/load.py
+generated/generated_orm.py
+generated/schema.prisma
+verification.json
+workflow_run.json
+reverse_inspection.json
+reverse_model.json
+reverse_similarity.json
+reverse_schema_map.json
+reverse_documents/
+reverse_generated/
+reverse_verification.json
+~~~
 
-## Bonus: SQL → NoSQL bidirectional migration
+The reverse CLI stages are available as reverse-inspect, reverse-infer, reverse-similarity, reverse-freeze, reverse-generate, reverse-export, and reverse-verify. They are documented in the source CLI and learning guide.
 
-The optional reverse direction is fully implemented in the separate reverse modules. It follows the same hybrid rule:
+---
 
-| Reverse layer | Deterministic ownership | Assistant ownership | Gate |
-|---|---|---|---|
-| Inspect / infer | Inspect SQLite tables, columns, foreign keys, indexes; infer root collections and embedded child arrays | Explain table-to-document choices | Review `reverse_model.json` |
-| Similarity | Normalize field names and calculate reproducible percentages | Explain low-confidence mappings | Low scores go to `needs_review` |
-| Generate | Generate document model, exporter, reverse ORM helper, and rollback instructions | Risk notes and narrative | Generate only from frozen reverse map |
-| Export | Read SQL rows, decode JSON columns, nest child rows, write JSON collections | Diagnose failures | Human approval before export |
-| Verify | Compare SQL row counts with exported documents and embedded child counts | Summarize drift | Pass/fail remains deterministic |
-| Orchestration | LangGraph interrupt and n8n Wait/If gate | Optional assist node | Rejection stops before export |
+## Test coverage
 
-Run the reverse path after the normal demo has created `artifacts/sample/demo.sqlite`:
+The test suite covers:
 
-```bash
-python3 -m schemashift reverse-inspect \
-  --db artifacts/sample/demo.sqlite \
-  --out artifacts/sample/reverse_inspection.json
+- reproducible forward inference and migration
+- foreign-key and generated-DDL structure
+- ORM CRUD shape
+- SQL-to-NoSQL reconstruction
+- nested child-array export
+- reverse verification
+- the real LangGraph path when the optional dependency is installed
 
-python3 -m schemashift reverse-infer \
-  --inspection artifacts/sample/reverse_inspection.json \
-  --forward-map artifacts/sample/schema_map.json \
-  --out artifacts/sample/reverse_model.json
+The standard-library tests run without a database server. The LangGraph test is skipped only when LangGraph is not installed.
 
-python3 -m schemashift reverse-similarity \
-  --inspection artifacts/sample/reverse_inspection.json \
-  --model artifacts/sample/reverse_model.json \
-  --out artifacts/sample/reverse_similarity.json
+---
 
-python3 -m schemashift reverse-freeze \
-  --model artifacts/sample/reverse_model.json \
-  --similarity artifacts/sample/reverse_similarity.json \
-  --out artifacts/sample/reverse_schema_map.json --approve
+## Design decisions and limitations
 
-python3 -m schemashift reverse-generate \
-  --map artifacts/sample/reverse_schema_map.json \
-  --out artifacts/sample/reverse_generated
+The implementation intentionally uses JSON files and SQLite for a portable demonstration. In a production deployment, the same deterministic core could be connected to MongoDB and PostgreSQL adapters.
 
-python3 -m schemashift reverse-export \
-  --db artifacts/sample/demo.sqlite \
-  --map artifacts/sample/reverse_schema_map.json \
-  --out artifacts/sample/reverse_documents
+The sample does not claim to be a complete production zero-downtime system. A design for expand, backfill, dual-write, verification, cutover, and rollback is documented in docs/zero-downtime.md.
 
-python3 -m schemashift reverse-verify \
-  --db artifacts/sample/demo.sqlite \
-  --map artifacts/sample/reverse_schema_map.json \
-  --out artifacts/sample/reverse_documents
-```
+Possible production extensions include:
 
-The result reconstructs documents such as `orders.json`, including nested `items` arrays and the original source field names when the forward map is supplied. Reverse artifacts include `document_model.json`, `sql_to_nosql.py`, `reverse_orm.py`, and `rollback.md`.
+- MongoDB and PostgreSQL connectors
+- bulk loading for large datasets
+- richer policies for mixed field types
+- encrypted secret management
+- persistent LangGraph checkpoint storage
+- change-data-capture or dual-write support
+- operational metrics and alerting
+- stronger schema compatibility checks
+- resumable migration batches
 
-Run the actual reverse LangGraph graph with:
+Implementation decisions, rejected alternatives, benchmark notes, and failure analysis are documented in DESIGN.md, BENCH.md, and docs/failure-log.md.
 
-```bash
-python3 -m schemashift.langgraph_reverse_app --approve
-```
+---
 
-The second n8n export, `workflows/schemashift_reverse.n8n.json`, runs the same reverse stages with an advisory assistant node and an approval Wait node.
+## Evaluation guide
 
-## Failure handling
+The most relevant files for review are:
 
-Two bugs found during implementation and their fixes are documented in [`docs/failure-log.md`](docs/failure-log.md). Keeping this record is important: migration tools must make failures visible rather than silently producing a partial database.
+- README.md for the submission overview and reproducibility
+- DESIGN.md for architectural decisions
+- CODE_WALKTHROUGH.md for a file-by-file explanation
+- schemashift/ for the implementation
+- tests/ for executable correctness checks
+- artifacts/sample/ for generated evidence
+- workflows/ for LangGraph-compatible and n8n orchestration paths
 
-## Bonus design
+The central implementation claim is that the assistant is advisory while deterministic code owns the migration contract and every data-changing operation.
 
-The zero-downtime strategy, including expand/backfill/dual-write/verify/cutover/rollback phases, is documented in [`docs/zero-downtime.md`](docs/zero-downtime.md). The local sample intentionally does not pretend that a single-process demo is production zero-downtime.
-
-## Submission checklist
-
-1. Create a private GitHub repository.
-2. Copy all files from this project into it.
-3. Run the tests and demo; keep the generated JSON reports as evidence.
-4. Read and understand `DESIGN.md`, `README.md`, and the generated SQL before the interview.
-5. Commit incrementally with messages such as `add deterministic inspection`, `add migration verification`, and `document hybrid workflow`.
-6. Add the recruitment mentors as collaborators and keep the repository private until instructed otherwise.
-
-## References
-
-* [SchemaShift challenge](https://github.com/WebClub-NITK/GDGxIris-Recruitments-2026/blob/main/Challenges/SchemaShift.md)
-* [PostgreSQL data modeling documentation](https://www.postgresql.org/docs/current/ddl.html)
-* [MongoDB data modeling patterns](https://www.mongodb.com/docs/manual/data-modeling/)
-* [Prisma schema reference](https://www.prisma.io/docs/orm/prisma-schema)
-* [n8n documentation](https://docs.n8n.io/)
